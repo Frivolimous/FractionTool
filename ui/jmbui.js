@@ -122,18 +122,26 @@ function button_constructBasic(par){
 	m.buttonMode=true;
 	m.downOnThis=false;
 	m.on("pointerover",function(e){
-		this.setDisplayState(DisplayState.DARKENED);
+		if (interactionMode=="desktop"){
+			this.setDisplayState(DisplayState.DARKENED);
+		}
 	});
 	m.on("pointerout",function(e){
 		this.setDisplayState(DisplayState.NORMAL);
 		this.downOnThis=false;
 	});
 	m.on("pointerdown",function(e){
-		this.setDisplayState(DisplayState.BRIGHTENED);
+		//if (interactionMode=="desktop"){
+			this.setDisplayState(DisplayState.BRIGHTENED);
+		//}
 		this.downOnThis=true;
 	});
 	m.on("pointerup",function(e){
-		this.setDisplayState(DisplayState.DARKENED);
+		if (interactionMode=="desktop"){
+			this.setDisplayState(DisplayState.DARKENED);
+		}else{
+			this.setDisplayState(DisplayState.NORMAL);
+		}
 		if (this.downOnThis){
 			this.output();
 		}
@@ -217,8 +225,10 @@ function uiElement_basic(par){
 
 	if (par.label!=null){
 		m.label=new PIXI.Text(par.label,par.labelStyle || {fill:0xffffff});
-		m.label.x=par.width/15;
-		m.label.y=par.height/15;
+		m.label.x=(par.width-m.label.width)/2;
+		m.label.y=(par.height-m.label.height)/2;
+		/*m.label.x=par.width/15;
+		m.label.y=par.height/15;*/
 		m.addChild(m.label);
 	}
 	

@@ -1108,6 +1108,9 @@ var myObj_currentError;
 var myObj_currentInput;
 
 function myObj_inputBox(s,_obj,output){
+	if (interactionMode=="mobile"){
+		input_makeVirtualKeyboard()
+	}
 	if (myObj_currentInput!=null){
 		myObj_currentInput.dispose();
 	}
@@ -1188,11 +1191,14 @@ function myObj_inputBox(s,_obj,output){
 	}
 
 	m.inBounds=function(x,y){
-		if (x>this.x && x<this.x+200 && y>this.y && y<this.y+200) return true;
+		if (x>this.x && x<this.x+200 && y>this.y && y<this.y+100) return true;
 		return false;
 	}
 
 	m.dispose=function(b=true){
+		if (interactionMode=="mobile"){
+			input_removeVirtualKeyboard();
+		}
 		m.carat=null;
 		if (b && this.output!=null){
 			this.output(m.input.text);

@@ -3,6 +3,7 @@ const inputM={
 	dragFunction:null,
 	gameCanvas:{x:0,y:0},
 	mouseEnabled:true,
+	keyboard:null,
 }
 
 function input_init(_gameStage){
@@ -18,7 +19,11 @@ function input_init(_gameStage){
 }
 
 function onMouseDown(e){
-	if (myObj_currentInput!=null && !myObj_currentInput.inBounds(inputM.mouse.x,inputM.mouse.y)) myObj_currentInput.dispose();
+	inputM.mouse.x=e.data.global.x;
+	inputM.mouse.y=e.data.global.y;
+	if (myObj_currentInput!=null && 
+		!myObj_currentInput.inBounds(inputM.mouse.x,inputM.mouse.y) &&
+		(inputM.keyboard!=null && !inputM.keyboard.inBounds(inputM.mouse.x,inputM.mouse.y))) myObj_currentInput.dispose();
 	if (!inputM.mouseEnabled) return;
 	inputM.mouse.down=true;
 	if (inputM.mouse.timerRunning) return;
@@ -68,6 +73,22 @@ function input_MouseObject(par){
 	this.down=par.down || false;
 	this.drag=par.drag || null;
 	this.timerRunning=false;
+}
+
+function input_makeVirtualKeyboard(){
+	if (inputM.keyboard==null){
+		inputM.keyboard=window_virtualKeyboard(onKeyDown);
+	}
+	app.stage.addChild(inputM.keyboard);
+	inputM.keyboard.animateAdd();
+	uiM.bottomBar.animateRemove();
+}
+
+function input_removeVirtualKeyboard(){
+	if (inputM.keyboard!=null){
+		inputM.keyboard.animateRemove();
+		uiM.bottomBar.animateAdd();
+	}
 }
 
 function onKeyDown(e){
