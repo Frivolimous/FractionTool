@@ -66,8 +66,15 @@ function myObj_makeFraction(expression1,expression2,line){
 		if (this.denominator.list.length==0){
 			if (!m.noDenominator){
 				m.noDenominator=true;
-				this.line.resize(0);	
+					
 			}
+			this.line.resize(-1);
+			if (m.denominator.list.length==0){
+				if (m.numerator.list.length>1){
+					this.line.makeBrackets(this.numerator.bounds.right-this.numerator.bounds.left);
+				}
+			}
+			
 			this.numerator.goTo(this.x,this.y);
 			this.numerator.refreshPositions();
 		}else{
@@ -76,14 +83,11 @@ function myObj_makeFraction(expression1,expression2,line){
 				this.numerator.refreshPositions();
 				m.noDenominator=false;
 			}
-			if (m.denominator.list.length==0){
-				this.line.resize(-1);
-			}else{
-				let _width=Math.max(this.numerator.bounds.right-this.numerator.bounds.left,this.denominator.bounds.right-this.numerator.bounds.left);
-				this.line.resize(_width);
-				this.line.tweenTo(this.x,this.y);
-				//this.line.resize(Math.max(this.numerator.getWidth(),this.denominator.getWidth());
-			}
+			
+			let _width=Math.max(this.numerator.bounds.right-this.numerator.bounds.left,this.denominator.bounds.right-this.numerator.bounds.left);
+			this.line.resize(_width);
+			this.line.tweenTo(this.x,this.y);
+			//this.line.resize(Math.max(this.numerator.getWidth(),this.denominator.getWidth());
 		}
 	}
 
@@ -493,9 +497,16 @@ function myObj_makeExpression(a){
 					return {type:"error",text:ERROR.COMBINE_FIRST};
 				}
 
-				if (_fraction.hasAdd() || _fraction.hasSub() || _fraction2.hasAdd() || _fraction2.hasSub()){
+				if (this.hasAdd() || this.hasSub() || _obj2.location.expression.hasAdd() || _obj2.location.expression.hasSub()){
 					return {type:"error",text:ERROR.ORDER_OP};
 				}
+				if (_fraction.hasAdd() || _fraction2.hasAdd()){
+					return {type:"error",text:"Simplify the Sum"};
+				}
+				if (_fraction.hasSub() ||_fraction2.hasSub()){
+					return {type:"error",text:"Simplify the Difference"};
+				}
+
 				let fIndex1;
 				let fIndex2;
 				var fFlipped=false;
@@ -802,6 +813,11 @@ function myObj_cancelValues(_obj1,_obj2,_expression1,_expression2){
 		}else{
 			return {type:"error",text:"Try factoring first."};
 		}
+	}else if (OPTIONS.cancelNegatives && _value2<0 && _value1<0){
+		return {type:"success",changing:[
+		{object:_obj1,text:String(Math.abs(_obj1.toNumber()))},
+		{object:_obj2,text:String(Math.abs(_obj2.toNumber()))}
+		]};
 	}else{
 		//Neither of them are factors 
 		//Includes the case where they share a factor ***SEPARATE***
@@ -1061,10 +1077,12 @@ function myObj_makeLine(){
 
 	m.master=null;
 	m.type="line";
+	m.bracketMode=false;
 
 	m.resize=function(width){
 		this.back.clear();
 		if (width>0){
+			m.bracketMode=false;
 			this.back.beginFill(CONFIG.colors.BOX);
 			this.back.lineStyle(1,CONFIG.colors.BOX_BORDER);
 			this.back.drawRoundedRect(-width/2-5,-2-5,width+10,4+10,5);
@@ -1074,6 +1092,32 @@ function myObj_makeLine(){
 		}
 	}
 	m.resize(100);
+
+	m.makeBrackets=function(width){
+		m.bracketMode=true;
+		this.back.clear();
+		this.back.beginFill(CONFIG.colors.BOX);
+		this.back.lineStyle(1,CONFIG.colors.BOX_BORDER);
+		this.back.drawRoundedRect(-width/2-10,-CONFIG.margins.tileSize/2,15,CONFIG.margins.tileSize,3);
+		this.back.drawRoundedRect(width/2-5,-CONFIG.margins.tileSize/2,15,CONFIG.margins.tileSize,3);
+		this.back.endFill();
+
+		this.back.lineStyle(2,0);
+		this.back.moveTo(-width/2,-CONFIG.margins.tileSize/3);
+		this.back.quadraticCurveTo(-width/2-7,0,-width/2,CONFIG.margins.tileSize/3);
+		this.back.moveTo(width/2,-CONFIG.margins.tileSize/3);
+		this.back.quadraticCurveTo(width/2+7,0,width/2,CONFIG.margins.tileSize/3);
+
+	}
+
+	m.getDistance=function(x,y){
+		if (this.bracketMode) return 10000;
+		if (x>this.x-this.back.width/2 && x<this.x+this.back.width/2 && y>this.y-this.back.height/2 && y<this.y+this.back.height/2){
+			return 0;
+		}else{
+			return 10000;
+		}
+	}
 
 	return m;
 }

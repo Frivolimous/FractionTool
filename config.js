@@ -21,6 +21,7 @@ const CONFIG={
 		WHITE:0xffffff,
 		BOX:0xf1f1f1,
 		BOX_BORDER:0x999999,
+		BLACK:0x333333,
 	}
 }
 
@@ -41,6 +42,8 @@ const OPTIONS={
 	//false,"input"
 	errorDisplay:"clickable",
 	//"timed","clickable"
+	cancelNegatives:true,
+	//true,false
 	showSoftErrors:true,
 	//true,false
 	showHardErrors:false,
@@ -112,6 +115,8 @@ function config_changeOptionSet(){
 			//false,"input"
 			OPTIONS.errorDisplay="clickable";
 			//"timed","clickable"
+			OPTIONS.cancelNegatives=false;
+			//true,false
 			OPTIONS.showSoftErrors=true;
 			//true,false
 			OPTIONS.showHardErrors=false;
@@ -153,6 +158,8 @@ function config_changeOptionSet(){
 			//false,"input"
 			OPTIONS.errorDisplay="clickable";
 			//"timed","clickable"
+			OPTIONS.cancelNegatives=true;
+			//true,false
 			OPTIONS.showSoftErrors=false;
 			//true,false
 			OPTIONS.showHardErrors=false;
@@ -194,6 +201,8 @@ function config_changeOptionSet(){
 			//false,"input"
 			OPTIONS.errorDisplay="clickable";
 			//"timed","clickable"
+			OPTIONS.cancelNegatives=false;
+			//true,false
 			OPTIONS.showSoftErrors=true;
 			//true,false
 			OPTIONS.showHardErrors=true;

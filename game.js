@@ -292,12 +292,14 @@ function showFactors(_object){
 			gameM.factors.push(_button);
 		}
 		if (OPTIONS.amplifyInSimpList){
-			let _button=myObj_makeFactor("Amplify","amplify");
-			_button.goTo(_object.x,_object.y);
-			_button.setTweenTarget(-1,_total,_object.location.expression.factorsUp);
-			_button.linked=_object;
-			game_addObject(_button);
-			gameM.factors.push(_button);
+			if (!_object.location.expression.parent.hasAdd() && !_object.location.expression.parent.hasSub()){
+				let _button=myObj_makeFactor("Amplify","amplify");
+				_button.goTo(_object.x,_object.y);
+				_button.setTweenTarget(-1,_total,_object.location.expression.factorsUp);
+				_button.linked=_object;
+				game_addObject(_button);
+				gameM.factors.push(_button);
+			}
 		}
 	}else if (OPTIONS.factorUsing=="primes"){
 		let _factors=JMBL.getPrimeDivisors(_object.toNumber());
@@ -517,7 +519,7 @@ function game_makeNewFraction(a1,a2){
 	game_addObject(_fraction.line);
 	gameM.gameStage.addChild(_fraction.numerator.graphics);
 	gameM.gameStage.addChild(_fraction.denominator.graphics);
-	gameM.gameStage.addChildAt(_fraction.line,1);
+	gameM.gameStage.addChild(_fraction.line);
 
 	if (a1!=null) game_loadExpression(_fraction.numerator,a1);
 	if (a2!=null) game_loadExpression(_fraction.denominator,a2);
