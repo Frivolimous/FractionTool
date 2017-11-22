@@ -173,7 +173,7 @@ function config_changeOptionSet(){
 			//true,false
 			OPTIONS.amplifyInSimpList=true;
 			//true,false
-			OPTIONS.factorList="bubbles";
+			OPTIONS.factorList="dropdown";
 			//"dropdown","bubbles"
 			break;
 		case 2:
