@@ -13,7 +13,11 @@ function input_init(_gameStage){
 	app.stage.on("pointerdown",onMouseDown);
 	app.stage.on("pointermove",onMouseMove);
 	//window.addEventListener("pointerdown",onMouseDown);
-	window.addEventListener("pointerup",onMouseUp);
+	if (interactionMode=="desktop"){
+		window.addEventListener("pointerup",onMouseUp);
+	}else{
+		window.addEventListener("touchend",onMouseUp);
+	}
 	//window.addEventListener("pointermove",onMouseMove);
 	inputM.mouse=new input_MouseObject();
 }
