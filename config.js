@@ -7,6 +7,8 @@ const CONFIG={
 	errorLoc:{x:300,y:400},
 	colors:{
 		RED:0xff0000,
+		CONFIRM:0x337733,
+		CANCEL:0x773333,
 		NUMBER_NEUTRAL:0xffffff,
 		NUMBER:0x3399ff,
 		NUMBER_TEXT:0xffffff,
@@ -319,6 +321,14 @@ function config_loadLevel(i){
 			gameM.mainExpression.addObject(game_makeNewFraction(["7"],["8"]));
 			gameM.mainExpression.addObject(game_addNewBlock("*"));
 			gameM.mainExpression.addObject(game_makeNewFraction(["9"],["10"]));
+			break;
+		case 13:
+			ui_updateLevelText(LEVELS.current,"Comparing");
+			gameM.mainExpression.addObject(game_makeNewFraction(["2"],["3"]));
+			gameM.mainExpression.addObject(game_addNewBlock(";"));
+			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["6"]));
+			gameM.mainExpression.addObject(game_addNewBlock(";"));
+			gameM.mainExpression.addObject(game_makeNewFraction(["7"],["12"]));
 			break;
 		default:
 			ui_updateLevelText(LEVELS.current,"END OF VARIANTS");

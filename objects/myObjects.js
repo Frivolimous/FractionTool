@@ -76,11 +76,14 @@ function myObj_makeFraction(expression1,expression2,line){
 				this.numerator.refreshPositions();
 				m.noDenominator=false;
 			}
-
-			let _width=Math.max(this.numerator.bounds.right-this.numerator.bounds.left,this.denominator.bounds.right-this.numerator.bounds.left);
-			this.line.resize(_width);
-			this.line.tweenTo(this.x,this.y);
-			//this.line.resize(Math.max(this.numerator.getWidth(),this.denominator.getWidth());
+			if (m.denominator.list.length==0){
+				this.line.resize(-1);
+			}else{
+				let _width=Math.max(this.numerator.bounds.right-this.numerator.bounds.left,this.denominator.bounds.right-this.numerator.bounds.left);
+				this.line.resize(_width);
+				this.line.tweenTo(this.x,this.y);
+				//this.line.resize(Math.max(this.numerator.getWidth(),this.denominator.getWidth());
+			}
 		}
 	}
 
@@ -470,13 +473,26 @@ function myObj_makeExpression(a){
 				//same fraction: Numerator and Denominator
 				if (_fraction.hasAdd() || _fraction.hasSub() || _fraction.hasDiv()) return {type:"hard",text:"simplify first"}; //numerator to denominator, only works if Multiplication Only.
 				return myObj_cancelValues(_obj1,_obj2,this,_obj2.location.expression);
-
 			}else{
 				//DIFFERENT FRACTIONS
-				if (!OPTIONS.moveAcrossFractions) return {type:"error",text:ERROR.COMBINE_FIRST};
-
-				let _master=_fraction.location.expression;
 				let _fraction2=_obj2.location.expression.parent;
+				let _master=_fraction.location.expression;
+				
+				if ((_fraction.location.pos>0 && _fraction.location.expression.list[_fraction.location.pos-1].toText()==":") ||
+					(_fraction2.location.pos>0 && _fraction2.location.expression.list[_fraction2.location.pos-1].toText()==":")){
+						return {type:"error",text:"Click the Division"};
+				}
+
+				if (!OPTIONS.moveAcrossFractions){
+					let _first=Math.min(_fraction.location.pos,_fraction2.location.pos);
+					let _last=Math.max(_fraction.location.pos,_fraction2.location.pos);
+					
+					for (var i=_first+1;i<_last;i+=1){
+						if (_master.list[i].type=="sign" && _master.list[i].toText()==";") return null;
+					}
+					return {type:"error",text:ERROR.COMBINE_FIRST};
+				}
+
 				if (_fraction.hasAdd() || _fraction.hasSub() || _fraction2.hasAdd() || _fraction2.hasSub()){
 					return {type:"error",text:ERROR.ORDER_OP};
 				}
@@ -541,8 +557,6 @@ function myObj_makeExpression(a){
 							//N-D or D-N
 							return myObj_cancelValues(_obj1,_obj2,this,_obj2.location.expression);
 						}
-					}else if (_fSign.toText()==":"){
-						return {type:"error",text:"Click the Division"};
 					}else{
 						if ((_fraction.numerator==_obj1.location.expression)==(_fraction2.numerator==_obj2.location.expression)){
 							if (_fraction.numerator==_obj1.location.expression){
@@ -731,8 +745,8 @@ function myObj_cancelValues(_obj1,_obj2,_expression1,_expression2){
 	let _num1=false;
 	if (_obj1.location.expression.factorsUp) _num1=true;
 
-	if (_obj1.toText()=="1" &&  _num1 && _expression1.list.length==1 && _obj2.toText()!="-1") return {type:"error",text:"Solo One cannot be combined"};
-	if (_obj2.toText()=="1" && !_num1 && _expression2.list.length==1 && _obj1.toText()!="-1") return {type:"error",text:"Solo One cannot be combined"};
+	//if (_obj1.toText()=="1" &&  _num1 && _expression1.list.length==1 && _obj2.toText()!="-1") return {type:"error",text:"Solo One cannot be combined"};
+	//if (_obj2.toText()=="1" && !_num1 && _expression2.list.length==1 && _obj1.toText()!="-1") return {type:"error",text:"Solo One cannot be combined"};
 	
 	if (_obj1.location.pos>0){
 		_sign1=_expression1.list[_obj1.location.pos-1];
@@ -1050,12 +1064,14 @@ function myObj_makeLine(){
 
 	m.resize=function(width){
 		this.back.clear();
-		this.back.beginFill(CONFIG.colors.BOX);
-		this.back.lineStyle(1,CONFIG.colors.BOX_BORDER);
-		this.back.drawRoundedRect(-width/2-5,-2-5,width+10,4+10,5);
-		this.back.lineStyle(0);
-		this.back.beginFill(0);
-		this.back.drawRoundedRect(-width/2,-2,width,4,3);
+		if (width>0){
+			this.back.beginFill(CONFIG.colors.BOX);
+			this.back.lineStyle(1,CONFIG.colors.BOX_BORDER);
+			this.back.drawRoundedRect(-width/2-5,-2-5,width+10,4+10,5);
+			this.back.lineStyle(0);
+			this.back.beginFill(0);
+			this.back.drawRoundedRect(-width/2,-2,width,4,3);
+		}
 	}
 	m.resize(100);
 
@@ -1238,11 +1254,11 @@ function myObj_inputBox(s,_obj,output){
 		if (myObj_currentInput==this) myObj_currentInput=null;
 	}
 
-	m.okButton=button_constructBasic({label:"OK",labelStyle:{fill:0xffffff,fontSize:10},bgColor:0x337733,width:30,height:15,output:function(){m.dispose()}});
+	m.okButton=button_constructBasic({label:"OK",labelStyle:{fill:0xffffff,fontSize:10},bgColor:CONFIG.colors.CONFIRM,width:30,height:15,output:function(){m.dispose()}});
 	m.okButton.x=105;
 	m.okButton.y=73;
 	m.addChild(m.okButton);
-	m.cancelButton=button_constructBasic({label:"CANCEL",labelStyle:{fill:0xffffff,fontSize:10},bgColor:0x773333,width:50,height:15,output:function(){m.input.text=""; m.dispose()}});
+	m.cancelButton=button_constructBasic({label:"CANCEL",labelStyle:{fill:0xffffff,fontSize:10},bgColor:CONFIG.colors.CANCEL,width:50,height:15,output:function(){m.input.text=""; m.dispose()}});
 	m.cancelButton.x=45;
 	m.cancelButton.y=73;
 	m.addChild(m.cancelButton);

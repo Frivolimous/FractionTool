@@ -236,6 +236,7 @@ function game_onClick(_object){
 		return;
 	}*/
 	if (_object.type=="sign"){
+		if (_object.toText()==";") return;
 		if (!game_tryCombine(_object.location.expression,_object.location.expression.list[_object.location.pos-1],_object.location.expression.list[_object.location.pos+1])){
 			if (myObj_currentError==null) myObj_errorPopup("Simplify First");
 			_object.errorFlash();
