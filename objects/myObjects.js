@@ -947,6 +947,7 @@ function myObj_makeFactor(s,v){
 
 	m.setTweenTarget=function(_index,_total,_up){
 		if (OPTIONS.factorList=="dropdown"){
+			if (_index==-1)_index=Math.ceil(_total);
 			this.tweenTo(this.x,this.y+(40+_index*20)*(_up?-1:1));
 		}else if (OPTIONS.factorList=="bubbles"){
 			_total=Math.ceil(_total);
