@@ -131,9 +131,9 @@ function button_constructBasic(par){
 		this.downOnThis=false;
 	});
 	m.on("pointerdown",function(e){
-		//if (interactionMode=="desktop"){
+		if (interactionMode=="desktop"){
 			this.setDisplayState(DisplayState.BRIGHTENED);
-		//}
+		}
 		this.downOnThis=true;
 	});
 	m.on("pointerup",function(e){

@@ -923,24 +923,54 @@ function myObj_makeBlank(){
 }
 
 function myObj_makeFactor(s,v){
-	let m=myObj_makeBasic();
-
-	m.back.beginFill(CONFIG.colors.FACTOR);
-	m.back.lineStyle(2,0);
-	m.back.drawRoundedRect(-CONFIG.margins.tileSize/2,-10,CONFIG.margins.tileSize,20,2);
-	m.text=new PIXI.Text(s,{fill:CONFIG.colors.SIGN_TEXT,fontSize:10});
-	m.text.x=-m.text.width/2;
+	let m=myObj_makeBasic();;
+	if (OPTIONS.factorList=="dropdown"){
+		m.back.beginFill(CONFIG.colors.FACTOR);
+		m.back.lineStyle(2,0);
+		m.back.drawRoundedRect(-CONFIG.margins.tileSize/2,-10,CONFIG.margins.tileSize,20,2);
+		m.text=new PIXI.Text(s,{fill:CONFIG.colors.SIGN_TEXT,fontSize:10});
+		m.text.x=-m.text.width/2;
+		m.text.y=-5;
+		m.addChild(m.text);
+	}else if (OPTIONS.factorList=="bubbles"){
+		m.back.beginFill(CONFIG.colors.FACTOR);
+		m.back.lineStyle(2,0);
+		m.back.drawRoundedRect(-25,-25,50,50,20);
+		m.text=new PIXI.Text(s,{fill:CONFIG.colors.SIGN_TEXT,fontSize:14});
+		m.text.x=-m.text.width/2;
+		m.text.y=-m.text.height/2;
+		m.addChild(m.text);
+	}
+	
 	m.value=v;
-	m.text.y=-5;
-	m.addChild(m.text);
 	m.type="factor";
 
-	m.toText=function(){
-		return this.text.text;
-	}
-
-	m.setText=function(s){
-		this.text.text=s;
+	m.setTweenTarget=function(_index,_total,_up){
+		if (OPTIONS.factorList=="dropdown"){
+			this.tweenTo(this.x,this.y+(40+_index*20)*(_up?-1:1));
+		}else if (OPTIONS.factorList=="bubbles"){
+			_total=Math.ceil(_total);
+			if (_index==-1){
+				//off to the side
+				let _x=Math.ceil(_total/2+1)*35;
+				let _y=60;
+				this.tweenTo(this.x+_x,this.y+_y*(_up?-1:1));
+			}else{
+				let numRow1=Math.ceil(_total/2);
+				let numRow2=Math.floor(_total/2);
+				let _x;
+				let _y;
+				if (_index<numRow1){
+					_x=-(numRow1-1)*35+70*_index;
+					_y=60;
+				}else{
+					_x=-(numRow2-1)*35+70*(_index-numRow1);
+					_y=115;
+				}
+				console.log(_total+" "+numRow1+" "+numRow2);
+				this.tweenTo(this.x+_x,this.y+_y*(_up?-1:1));
+			}
+		}
 	}
 
 	return m;

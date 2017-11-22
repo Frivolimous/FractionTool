@@ -285,7 +285,7 @@ function showFactors(_object){
 			_button.goTo(_object.x,_object.y);
 			/*_button.x=_object.x;
 			_button.y=_object.y;*/
-			_button.tweenTo(_button.x,_button.y+(40+i*20)*(_object.location.expression.factorsUp?-1:1));
+			_button.setTweenTarget(i,_total,_object.location.expression.factorsUp);
 			_button.linked=_object;
 			game_addObject(_button);
 			gameM.factors.push(_button);
@@ -293,7 +293,7 @@ function showFactors(_object){
 		if (OPTIONS.amplifyInSimpList){
 			let _button=myObj_makeFactor("Amplify","amplify");
 			_button.goTo(_object.x,_object.y);
-			_button.tweenTo(_button.x,_button.y+(40+i*20)*(_object.location.expression.factorsUp?-1:1));
+			_button.setTweenTarget(-1,_total,_object.location.expression.factorsUp);
 			_button.linked=_object;
 			game_addObject(_button);
 			gameM.factors.push(_button);
@@ -306,7 +306,7 @@ function showFactors(_object){
 			_button.goTo(_object.x,_object.y);
 			/*_button.x=_object.x;
 			_button.y=_object.y;*/
-			_button.tweenTo(_button.x,_button.y+(40+i*20)*(_object.location.expression.factorsUp?-1:1));
+			_button.setTweenTarget(i,_total,_object.location.expression.factorsUp);
 			_button.linked=_object;
 			game_addObject(_button);
 			gameM.factors.push(_button);

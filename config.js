@@ -61,6 +61,8 @@ const OPTIONS={
 	//true,false
 	amplifyInSimpList:true,
 	//true,false
+	factorList:"bubbles",
+	//"dropdown","bubbles"
 }
 
 const ERROR={
@@ -130,6 +132,8 @@ function config_changeOptionSet(){
 			//true,false
 			OPTIONS.amplifyInSimpList=false;
 			//true,false
+			OPTIONS.factorList="dropdown";
+			//"dropdown","bubbles"
 			break;
 		case 1:
 			ui_setRulesText("Freedom");
@@ -169,6 +173,8 @@ function config_changeOptionSet(){
 			//true,false
 			OPTIONS.amplifyInSimpList=true;
 			//true,false
+			OPTIONS.factorList="bubbles";
+			//"dropdown","bubbles"
 			break;
 		case 2:
 			ui_setRulesText("Full Input");
@@ -208,6 +214,8 @@ function config_changeOptionSet(){
 			//true,false
 			OPTIONS.amplifyInSimpList=true;
 			//true,false
+			OPTIONS.factorList="dropdown";
+			//"dropdown","bubbles"
 			break;
 	}
 }
