@@ -867,6 +867,24 @@ function myObj_makeExpression(a){
 				//ADJACENT -- EASY
 				switch(sign1.toText()){
 					case "*": //adjacent multiplication
+						if (OPTIONS.forceLeftToRight!=false){
+							let _firstMult=null;
+							for (var i=0;_firstMult==null;i+=1){
+								if (this.list[i].type=="sign" && this.list[i].toText()=="*"){
+									_firstMult=i;
+								}
+							}
+							if (OPTIONS.forceLeftToRight==true && sign1.location.pos!=_firstMult) return {type:"soft",text:ERROR.LEFT_TO_RIGHT};
+							if (sign1.location.pos!=_firstMult && OPTIONS.forceLeftToRight=="mixed"){
+								if (this.hasAdd() || this.hasSub()){
+									return {type:"soft",text:ERROR.LEFT_TO_RIGHT};
+								}
+
+								if (this.hasDiv()){
+									return {type:"soft",text:ERROR.DIVISION_FIRST};
+								}
+							}
+						}
 						return {type:"success",changing:[{object:_obj1,text:String(_obj1.toNumber()*_obj2.toNumber())}],removing:[sign2,_obj2]};
 					case ":": //adjacent division
 						return {type:"success",changing:[{object:_obj1,text:String(_obj1.toNumber()/_obj2.toNumber())}],removing:[sign2,_obj2]};
