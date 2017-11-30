@@ -27,7 +27,7 @@ function onMouseDown(e){
 	inputM.mouse.y=e.data.global.y;
 	if (myObj_currentInput!=null && 
 		!myObj_currentInput.inBounds(inputM.mouse.x,inputM.mouse.y) &&
-		(inputM.keyboard!=null && !inputM.keyboard.inBounds(inputM.mouse.x,inputM.mouse.y))) myObj_currentInput.dispose();
+		(inputM.keyboard==null || !inputM.keyboard.inBounds(inputM.mouse.x,inputM.mouse.y))) myObj_currentInput.dispose();
 	if (!inputM.mouseEnabled) return;
 	inputM.mouse.down=true;
 	if (inputM.mouse.timerRunning) return;
@@ -101,20 +101,15 @@ function onKeyDown(e){
 		return;
 	}
 	switch(e.key){
-		case "A": game_startAmplify(); break; //myObj_inputBox("HEY!"); break;
-		/*case "1": ui_selectButtonAt(0); break;
-		case "2": ui_selectButtonAt(1); break;
-		case "3": ui_selectButtonAt(2); break;
-		case "4": ui_selectButtonAt(3); break;
-		case "5": ui_selectButtonAt(4); break;
-		case "6": ui_selectButtonAt(5); break;
-		case "7": ui_selectButtonAt(6); break;
-		case "8": ui_selectButtonAt(7); break;
-		case "9": ui_selectButtonAt(8); break;
-		case "0": ui_selectButtonAt(9); break;
-		case "-": case "_": game_zoomBy(1/1.2); break;
-		case "Enter": break;*/
+		case "A": case "a": game_startAmplify(); break;
+		case "ArrowLeft": LEVELS.loadLevel(-1); break;
+		case "ArrowRight": LEVELS.loadLevel(1); break;
+		case "ArrowUp":
+		case "ArrowDown": 
+		case "Q": case "q": LEVELS.loadLevel(0); break;
+		case "R": case "r": config_changeOptionSet(); break;
 	}
+	console.log(e.key);
 }
 
 function onKeyUp(e){

@@ -1,12 +1,10 @@
 function window_bottomBar(){
 	var m=uiElement_basic({width:stageBorders.right,height:80,y:stageBorders.bot-80,bgColor:CONFIG.colors.BOX});
 	m.animateAdd=function(){
-		console.log("A");
 		JMBL.tweenTo(this,10,{y:stageBorders.bot-80});
 	}
 	
 	m.animateRemove=function(){
-		console.log("B");
 		JMBL.tweenTo(this,10,{y:stageBorders.bot+80});
 	}
 	return m;
@@ -65,12 +63,10 @@ function window_virtualKeyboard(_output){
 	m.addChild(_button);
 	i+=1;
 	m.animateAdd=function(){
-		console.log("A");
 		JMBL.tweenTo(this,10,{y:stageBorders.bot-80});
 	}
 	
 	m.animateRemove=function(){
-		console.log("B");
 		JMBL.tweenTo(this,10,{y:stageBorders.bot+80});
 	}
 

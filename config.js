@@ -7,6 +7,7 @@ const CONFIG={
 	errorLoc:{x:300,y:400},
 	colors:{
 		RED:0xff0000,
+		ORANGE:0xff9900,
 		CONFIRM:0x337733,
 		CANCEL:0x773333,
 		NUMBER_NEUTRAL:0xffffff,
@@ -36,6 +37,8 @@ const OPTIONS={
 	//true, false
 	combineFactors:"input",
 	//true, false, "-1", "input"
+	commonText:"factorOf",
+	//"simplify", "factorOf",
 	combineCommon:"input",
 	//false,true,"input"
 	combineNot:"input",
@@ -56,18 +59,26 @@ const OPTIONS={
 	//true,false
 	forceMultFirstOrderOp:false,
 	//true,false
+	forceLeftToRight:"mixed",
+	//true,false,"mixed"
 	onlyAdjacentOperations:false,
-	//true,false
+	//true,false,
 	allowSubFractionMultipleNumerators:true,
-	//true,false
+	//true,false,"brackets"
 	numeratorsAcrossAddition:true,
 	//true,false,"fraction"
 	divisorsAcrossAddition:true,
 	//true,false
 	amplifyInSimpList:true,
 	//true,false
+	amplifySolves:false,
+	//false, true, "solo"
 	factorList:"bubbles",
 	//"dropdown","bubbles"
+	allowCancelOtherExpression:false,
+	//true,false
+	allowMergeMakeBrackets:true,
+	//true,false
 }
 
 const ERROR={
@@ -78,21 +89,30 @@ const ERROR={
 	//if option 'moveAcrossFractions==false' and attempting to work across two different fractions
 	SUBTRACT_FIRST:"Follow Order of Operations",
 	//if attempting to do an operation following a negative value (and option enabled)
+	LEFT_TO_RIGHT:"Work Left to Right",
+	//if 'work left to right' is enabled
+	DIVISION_FIRST:"Click the Division First",
+	//if left to right is enabled and a division is blocking pure multiplication, or if trying to work across a division
+	MULTIPLICATION_FIRST:"Compute the Multiplication First",
+	//if 'force multiplication first' and soft error, or general ORDER OF OPERATIONS that has to do with this.
+	SAME_DENOMINATOR:"Denominators must be the same.",
+	//addition/subtraction with different denominators
 }
 
 const LEVELS={
 	current:0,
 
 	loadLevel:function(i){
-		LEVELS.current+=i;
-		LEVELS.current=Math.max(LEVELS.current,0);
-		LEVELS.current=Math.min(LEVELS.current,LEVELS.data.length);
+		if (LEVELS.current==-1 && i!=0) {
+			LEVELS.current=0;
+		}else{
+			LEVELS.current+=i;
+			LEVELS.current=Math.max(LEVELS.current,0);
+		}
 		game_clearGame();
 		config_loadLevel(LEVELS.current);
 		//ui_updateLevelText(LEVELS.current);
 	},
-
-	data:new Array(17),
 }
 
 function config_changeOptionSet(){
@@ -103,10 +123,12 @@ function config_changeOptionSet(){
 			ui_setRulesText("Standard");
 			OPTIONS.factorUsing="pairs";
 			//"pairs","primes","input",
-			OPTIONS.factorsWhileDraging=false;
-			//true,false //disabled if factorUsing is input
-			OPTIONS.factorMinusOverride="full";
-			//true, false, "full"
+			OPTIONS.factorsWhileDraging="noclose";
+			//true,false, "noclose" //disabled if factorUsing is input
+			OPTIONS.factorMinusOverride="both"; //STILL UNCLEAR
+			//true, false, "full","both"
+			OPTIONS.commonText="simplify";
+			//"simplify", "factorOf"
 			OPTIONS.combineFactors="input";
 			//true, false, "-1", "input"
 			OPTIONS.combineCommon="input";
@@ -115,13 +137,113 @@ function config_changeOptionSet(){
 			//false,"input"
 			OPTIONS.errorDisplay="clickable";
 			//"timed","clickable"
-			OPTIONS.cancelNegatives=false;
+			OPTIONS.cancelNegatives="both";
+			//true,false,"both"
+			OPTIONS.showSoftErrors=true; //Orange Feedback, show as ORANGE
+			//true,false
+			OPTIONS.showHardErrors=true; // Disconnect Feedback, show the ERROR MESSAGE
+			//true,false
+			OPTIONS.moveAcrossFractions=true;
+			//true,false
+			OPTIONS.allowSubAddInside=false;
+			//true,false
+			OPTIONS.allowSubAddFractions=false;
+			//true,false
+			OPTIONS.forceMultFirstOrderOp=true;
+			//true,false
+			OPTIONS.onlyAdjacentOperations=false;
+			//true,false
+			OPTIONS.allowSubFractionMultipleNumerators="brackets";
+			//true,false
+			OPTIONS.numeratorsAcrossAddition=false;
+			//true,false,"fraction"
+			OPTIONS.divisorsAcrossAddition=false; 
+			//true,false
+			OPTIONS.amplifyInSimpList=true;
+			//true,false
+			OPTIONS.amplifySolves="solo";
+			//false, true, "solo"
+			OPTIONS.factorList="dropdown";
+			//"dropdown","bubbles"
+			OPTIONS.allowCancelOtherExpression=true;
+			//true,false
+			OPTIONS.allowMergeMakeBrackets=true;
+			//true,false
+			break;
+		case 1:
+			ui_setRulesText("Freedom");
+			OPTIONS.factorUsing="pairs";
+			//"pairs","primes","input",
+			OPTIONS.factorsWhileDraging="noclose";
+			//true,false //disabled if factorUsing is input
+			OPTIONS.factorMinusOverride=false;
+			//true, false, "full"
+			OPTIONS.commonText="simplify";
+			//"simplify", "factorOf"
+			OPTIONS.combineFactors="input";
+			//true, false, "-1", "input"
+			OPTIONS.combineCommon="input";
+			//false,true,"input"
+			OPTIONS.combineNot="input";
+			//false,"input"
+			OPTIONS.errorDisplay="clickable";
+			//"timed","clickable"
+			OPTIONS.cancelNegatives=true;
+			//true,false
+			OPTIONS.showSoftErrors=false;
+			//true,false
+			OPTIONS.showHardErrors=false;
+			//true,false
+			OPTIONS.moveAcrossFractions=true;
+			//true,false
+			OPTIONS.allowSubAddInside=true;
+			//true,false
+			OPTIONS.allowSubAddFractions=true;
+			//true,false
+			OPTIONS.forceMultFirstOrderOp=false;
+			//true,false
+			OPTIONS.onlyAdjacentOperations=false;
+			//true,false
+			OPTIONS.allowSubFractionMultipleNumerators=true;
+			//true,false
+			OPTIONS.numeratorsAcrossAddition=false;
+			//true,false,"fraction"
+			OPTIONS.divisorsAcrossAddition=false;
+			//true,false
+			OPTIONS.amplifyInSimpList=true;
+			//true,false
+			OPTIONS.amplifySolves="solo";
+			//false, true, "solo"
+			OPTIONS.factorList="dropdown";
+			//"dropdown","bubbles"
+			OPTIONS.allowCancelOtherExpression=false;
+			//true,false
+			OPTIONS.allowMergeMakeBrackets=false;
+			//true,false
+			break;
+		case 2:
+			ui_setRulesText("Standard");
+			OPTIONS.factorUsing="pairs";  // NOT DISCUSSED BUT OK?
+			//"pairs","primes","input",
+			OPTIONS.factorsWhileDraging=false; // LISTS DONT CLOSE 
+			//true,false //disabled if factorUsing is input
+			OPTIONS.factorMinusOverride="full"; //-1 pulled out AND decomposition list opens
+			//true, false, "full"
+			OPTIONS.combineFactors="input"; //yes
+			//true, false, "-1", "input"
+			OPTIONS.combineCommon="input"; //yes
+			//false,true,"input"
+			OPTIONS.combineNot="input"; //yes
+			//false,"input"
+			OPTIONS.errorDisplay="clickable"; // who cares
+			//"timed","clickable"
+			OPTIONS.cancelNegatives=false; // yes, and input opens if common divisor exists
 			//true,false
 			OPTIONS.showSoftErrors=true;
 			//true,false
 			OPTIONS.showHardErrors=false;
 			//true,false
-			OPTIONS.moveAcrossFractions=false;
+			OPTIONS.moveAcrossFractions=false; // multiplication yes, addition no.
 			//true,false
 			OPTIONS.allowSubAddInside=false;
 			//true,false
@@ -133,16 +255,16 @@ function config_changeOptionSet(){
 			//true,false
 			OPTIONS.allowSubFractionMultipleNumerators=false;
 			//true,false
-			OPTIONS.numeratorsAcrossAddition=false;
+			OPTIONS.numeratorsAcrossAddition=false; // false
 			//true,false,"fraction"
-			OPTIONS.divisorsAcrossAddition=false;
+			OPTIONS.divisorsAcrossAddition=false; // false
 			//true,false
-			OPTIONS.amplifyInSimpList=false;
+			OPTIONS.amplifyInSimpList=false; //true
 			//true,false
-			OPTIONS.factorList="dropdown";
+			OPTIONS.factorList="dropdown"; // dropdown
 			//"dropdown","bubbles"
 			break;
-		case 1:
+		case 3:
 			ui_setRulesText("Freedom");
 			OPTIONS.factorUsing="pairs";
 			//"pairs","primes","input",
@@ -185,7 +307,7 @@ function config_changeOptionSet(){
 			OPTIONS.factorList="dropdown";
 			//"dropdown","bubbles"
 			break;
-		case 2:
+		case 4:
 			ui_setRulesText("Full Input");
 			OPTIONS.factorUsing="input";
 			//"pairs","primes","input",
@@ -239,108 +361,94 @@ function config_loadLevel(i){
 	switch(i){
 		case 0:
 			ui_updateLevelText(LEVELS.current,"Multiplication");
-			gameM.mainExpression.addObject(game_makeNewFraction(["2"],["3"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["3"],["4"]));
+			game_makeNewProblem("[2/3]*[3/4]");
 			break;
 		case 1:
 			ui_updateLevelText(LEVELS.current,"Addition");
-			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["2"]));
-			gameM.mainExpression.addObject(game_addNewBlock("+"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["8"],["3"]));
+			game_makeNewProblem("[5/2]+[8/3]");
 			break;
 		case 2:
 			ui_updateLevelText(LEVELS.current,"Subtraction");
-			gameM.mainExpression.addObject(game_makeNewFraction(["2"],["12"]));
-			gameM.mainExpression.addObject(game_addNewBlock("-"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["4"],["15"]));
+			game_makeNewProblem("[2/12]-[4/15]");
 			break;
 		case 3:
 			ui_updateLevelText(LEVELS.current,"Division");
-
-			gameM.mainExpression.addObject(game_makeNewFraction(["10"],["4"]));
-			gameM.mainExpression.addObject(game_addNewBlock(":"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["8"]));
+			game_makeNewProblem("[10/4]:[5/8]");
 			break;
 		case 4:
 			ui_updateLevelText(LEVELS.current,"Negatives 1");
-			gameM.mainExpression.addObject(game_makeNewFraction(["-7"],["2"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["-5"],["-3"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["7","-","5"],["2","-","7"]));
+			game_makeNewProblem("[-7/2]*[-5/-3]*[7-5/2-7]");
 			break;
 		case 5:
 			ui_updateLevelText(LEVELS.current,"Negatives 2");
-			gameM.mainExpression.addObject(game_makeNewFraction(["-7"],["2"]));
-			gameM.mainExpression.addObject(game_addNewBlock("+"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["-5"],["-2"]));
-			gameM.mainExpression.addObject(game_addNewBlock("-"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["7","-","5"],["2","-","7"]));
+			game_makeNewProblem("[-7/2]+[-5/-2]-[7-5/2-7]");
 			break;
 		case 6:
 			ui_updateLevelText(LEVELS.current,"Long Expressions");
 			gameM.mainExpression.x-=50;
-			gameM.mainExpression.addObject(game_makeNewFraction(["6","-","4","+","7","-","3","-","2","*","2"],["2","*","4","+","7","-","3","*","2","*","2"]));
+			game_makeNewProblem("[6-4+7-3-2*2/2*4+7-3*2*2]");
 			break;
 		case 7:
 			ui_updateLevelText(LEVELS.current,"Large Mult");
-			gameM.mainExpression.addObject(game_makeNewFraction(["96"],["377"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["403"],["256"]));
+			game_makeNewProblem("[96/377]*[403/256]");
 			break;
 		case 8:
 			ui_updateLevelText(LEVELS.current,"Large Add");
-			gameM.mainExpression.addObject(game_makeNewFraction(["704"],["640"]));
-			gameM.mainExpression.addObject(game_addNewBlock("+"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["448"],["256"]));
+			game_makeNewProblem("[704/640]+[448/256]");
 			break;
 		case 9:
 			ui_updateLevelText(LEVELS.current,"Mult Add");
-			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["5"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["6"],["7"]));
-			gameM.mainExpression.addObject(game_addNewBlock("+"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["24"],["21"]));
+			game_makeNewProblem("[5/5]*[6/7]+[24/21]");
 			break;
 		case 10:
 			ui_updateLevelText(LEVELS.current,"Sub Add");
-			gameM.mainExpression.addObject(game_makeNewFraction(["3"],["5"]));
-			gameM.mainExpression.addObject(game_addNewBlock("-"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["20"],["10"]));
-			gameM.mainExpression.addObject(game_addNewBlock("+"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["2"],["5"]));
+			game_makeNewProblem("[3/5]-[20/10]+[2/5]");
 			break;
 		case 11:
 			ui_updateLevelText(LEVELS.current,"Sub Div");
-			gameM.mainExpression.addObject(game_makeNewFraction(["8"],["5"]));
-			gameM.mainExpression.addObject(game_addNewBlock("-"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["8"],["3"]));
-			gameM.mainExpression.addObject(game_addNewBlock(":"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["8"],["3"]));
+			game_makeNewProblem("[8/5]-[8/3]:[8/3]");
 			break;
 		case 12:
 			ui_updateLevelText(LEVELS.current,"Lots of Mults");
-			gameM.mainExpression.addObject(game_makeNewFraction(["1"],["2"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["3"],["4"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["6"]));
-			gameM.mainExpression.addObject(game_addNewBlock(":"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["7"],["8"]));
-			gameM.mainExpression.addObject(game_addNewBlock("*"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["9"],["10"]));
+			game_makeNewProblem("[1/2]*[3/4]*[5/6]:[7/8]*[9/10]");
 			break;
 		case 13:
 			ui_updateLevelText(LEVELS.current,"Comparing");
-			gameM.mainExpression.addObject(game_makeNewFraction(["2"],["3"]));
-			gameM.mainExpression.addObject(game_addNewBlock(";"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["5"],["6"]));
-			gameM.mainExpression.addObject(game_addNewBlock(";"));
-			gameM.mainExpression.addObject(game_makeNewFraction(["7"],["12"]));
+			game_makeNewProblem("[2/3];[5/6];[7/12]");
+			break;
+		case 14:
+			ui_updateLevelText(LEVELS.current,"Sums then Prods");
+			game_makeNewProblem("[2+3/3+5]*[3+4/4+5]");
+			break;
+		case 15:
+			ui_updateLevelText(LEVELS.current,"Brackets");
+			game_makeNewProblem("[6+7*(2+2*4)/2*(7+5*(3+2))]");
+			gameM.mainExpression.goTo(50,230);
+			break;
+		case 16:
+			ui_updateLevelText(LEVELS.current,"Long Addition");
+			game_makeNewProblem("[3+4+5+6+7+8/3+4+5+6-7+8]");
+			break;
+		case -1:
+			ui_updateLevelText("-","Custom");
+			game_makeNewProblem(CUSTOM_LEVEL);
 			break;
 		default:
 			ui_updateLevelText(LEVELS.current,"END OF VARIANTS");
+			gameM.mainExpression.goTo(10,230);
 			break;
 	}
+}
+
+var CUSTOM_LEVEL="";
+
+function loadCustomLevel(s){
+	CUSTOM_LEVEL=s;
+	LEVELS.current=-1;
+	game_clearGame();
+	if (OPTIONS.setUsed==-1) config_changeOptionSet();
+	gameM.mainExpression=myObj_makeExpression();
+	gameM.mainExpression.goTo(100,230);	
+	ui_updateLevelText("-","Custom");
+	game_makeNewProblem(s);
 }

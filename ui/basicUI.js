@@ -24,10 +24,10 @@ function ui_init(){
 	_button.x=50;
 	_button.y=20;
 
-	_button=button_constructBasic({label:"Rules",labelStyle:{fill:0xffffff,fontSize:14},width:80,height:40,output:config_changeOptionSet});
+	/*_button=button_constructBasic({label:"Rules",labelStyle:{fill:0xffffff,fontSize:14},width:80,height:40,output:config_changeOptionSet});
 	uiM.bottomBar.addChild(_button);
 	_button.x=530;
-	_button.y=30;
+	_button.y=30;*/
 
 	_button=button_constructBasic({width:40,height:40,output:function(){LEVELS.loadLevel(-1)}});
 	_button.x=640;
@@ -61,9 +61,9 @@ function ui_init(){
 	uiM.levelText.y=10;
 	uiM.bottomBar.addChild(uiM.levelText);
 	uiM.rulesText=new PIXI.Text("RULES",{fill:0x6060ee,fontWeight:"bold",fontSize:14});
-	uiM.rulesText.x=532;
+	/*uiM.rulesText.x=532;
 	uiM.rulesText.y=10;
-	uiM.bottomBar.addChild(uiM.rulesText);
+	uiM.bottomBar.addChild(uiM.rulesText);*/
 }
 
 function ui_onTick(_delta){
