@@ -732,19 +732,39 @@ function myObj_makeExpression(a){
 				//DIFFERENT FRACTIONS
 				let _fraction2=_obj2.location.expression.parent;
 				let _master=_fraction.location.expression;
-				
+
 				if ((_fraction.location.pos>0 && _fraction.location.expression.list[_fraction.location.pos-1].toText()==":") ||
 					(_fraction2.location.pos>0 && _fraction2.location.expression.list[_fraction2.location.pos-1].toText()==":")){
 						return {type:"error",text:ERROR.DIVISION_FIRST};
 				}
-
-				if (!OPTIONS.moveAcrossFractions){
-					let _first=Math.min(_fraction.location.pos,_fraction2.location.pos);
-					let _last=Math.max(_fraction.location.pos,_fraction2.location.pos);
-					
-					for (var i=_first+1;i<_last;i+=1){
-						if (_master.list[i].type=="sign" && _master.list[i].toText()==";") return null;
+				if (OPTIONS.forceLeftToRight!=false){
+					let _firstMult=null;
+					let _root=_fraction.location.expression;
+					let _sign=_root.list[Math.min(_fraction.location.pos,_fraction2.location.pos)+1];
+					for (var i=0;_firstMult==null;i+=1){
+						if (_root.list[i].type=="sign" && _root.list[i].toText()=="*"){
+							_firstMult=i;
+						}
 					}
+					if (OPTIONS.forceLeftToRight==true && _sign.location.pos!=_firstMult) return {type:"soft",text:ERROR.LEFT_TO_RIGHT};
+					if ((_sign.location.pos!=_firstMult || Math.abs(_fraction.location.pos-_fraction2.location.pos)>2) && OPTIONS.forceLeftToRight=="mixed"){
+						if (_root.hasAdd() || _root.hasSub()){
+							return {type:"soft",text:ERROR.LEFT_TO_RIGHT};
+						}
+
+						if (_root.hasDiv()){
+							return {type:"soft",text:ERROR.DIVISION_FIRST};
+						}
+					}
+				}
+				let _first=Math.min(_fraction.location.pos,_fraction2.location.pos);
+				let _last=Math.max(_fraction.location.pos,_fraction2.location.pos);
+				
+				for (var i=_first+1;i<_last;i+=1){
+					if (_master.list[i].type=="sign" && _master.list[i].toText()==";") return null;
+				}
+				if (!OPTIONS.moveAcrossFractions){
+					
 					//must combine fractions first if 'move across fractions' is disabled
 					return {type:"error",text:ERROR.COMBINE_FIRST};
 				}
@@ -869,7 +889,7 @@ function myObj_makeExpression(a){
 					case "*": //adjacent multiplication
 						if (OPTIONS.forceLeftToRight!=false){
 							let _firstMult=null;
-							for (var i=0;_firstMult==null;i+=1){
+							for (var i=_scope.start;_firstMult==null;i+=1){
 								if (this.list[i].type=="sign" && this.list[i].toText()=="*"){
 									_firstMult=i;
 								}
