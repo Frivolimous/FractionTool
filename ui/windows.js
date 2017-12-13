@@ -1,5 +1,5 @@
 function window_bottomBar(){
-	var m=uiElement_basic({width:stageBorders.right,height:80,y:stageBorders.bot-80,bgColor:CONFIG.colors.BOX});
+	var m=uiElement_basic({width:stageBorders.right,height:80,y:stageBorders.bot-80,bgColor:0xf1f1f1});
 	m.animateAdd=function(){
 		JMBL.tweenTo(this,10,{y:stageBorders.bot-80});
 	}
@@ -11,7 +11,7 @@ function window_bottomBar(){
 }
 
 function window_virtualKeyboard(_output){
-	var m=uiElement_basic({width:stageBorders.right,height:80,y:stageBorders.bot+80,bgColor:CONFIG.colors.BOX});
+	var m=uiElement_basic({width:stageBorders.right,height:80,y:stageBorders.bot+80,bgColor:0xf1f1f1});
 	m.buttons=[];
 	let i=0;
 	window_makeKeyboardButton("1",15+i*55,m,_output);

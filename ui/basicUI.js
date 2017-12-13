@@ -2,12 +2,15 @@ let uiM={
 	bottomBar:null,
 	levelText:null,
 	rulesText:null,
+	undoButton:null,
+	redoButton:null,
 };
 
 function ui_updateLevelText(i,s){
 	uiM.levelText.text="Level "+i;
 	if (s!=null) uiM.levelText.text+=": "+s
 }
+
 function ui_overrideLevelText(s){
 	uiM.levelText.text=s;
 }
@@ -19,11 +22,23 @@ function ui_setRulesText(s){
 function ui_init(){
 	uiM.bottomBar=window_bottomBar();
 	app.stage.addChild(uiM.bottomBar);
-	let _button=button_constructBasic({label:"Amplify",labelStyle:{fill:0xffffff,fontSize:14},width:80,height:40,output:game_startAmplify});
+	let _button=button_constructBasic({label:"Amplify",labelStyle:{fill:0xffffff,fontSize:14},width:80,height:40,output:game_toggleAmplifySelect});
 	uiM.bottomBar.addChild(_button);
 	_button.x=50;
 	_button.y=20;
 
+	_button=button_constructBasic({label:"Undo",labelStyle:{fill:0xffffff,fontSize:14},width:60,height:40,output:game_undo});
+	uiM.bottomBar.addChild(_button);
+	_button.x=170;
+	_button.y=20;
+	uiM.undoButton=_button;
+
+	_button=button_constructBasic({label:"Redo",labelStyle:{fill:0xffffff,fontSize:14},width:60,height:40,output:game_redo});
+	uiM.bottomBar.addChild(_button);
+	_button.x=235;
+	_button.y=20;
+	uiM.redoButton=_button;
+	
 	/*_button=button_constructBasic({label:"Rules",labelStyle:{fill:0xffffff,fontSize:14},width:80,height:40,output:config_changeOptionSet});
 	uiM.bottomBar.addChild(_button);
 	_button.x=530;
@@ -61,11 +76,9 @@ function ui_init(){
 	uiM.levelText.y=10;
 	uiM.bottomBar.addChild(uiM.levelText);
 	uiM.rulesText=new PIXI.Text("RULES",{fill:0x6060ee,fontWeight:"bold",fontSize:14});
+
+
 	/*uiM.rulesText.x=532;
 	uiM.rulesText.y=10;
 	uiM.bottomBar.addChild(uiM.rulesText);*/
-}
-
-function ui_onTick(_delta){
-	
 }
