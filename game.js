@@ -258,9 +258,9 @@ function showFactors(_object){
 		gameM.objectManager.addObject(_ampButton);
 		if (_object.location.expression.factorsUp){
 			_ampButton.goTo(_object.x,_object.factorBox.y-_ampButton.back.height/2);
-			_object.factorBar.setPosition(1);
 		}else{
 			_ampButton.goTo(_object.x,_object.factorBox.y+_object.factorBox.mask.height+_ampButton.back.height/2);
+			_object.factorBar.setPosition(1);
 		}
 	}
 }
